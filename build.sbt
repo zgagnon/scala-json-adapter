@@ -4,6 +4,8 @@ version := "1.0-SNAPSHOT"
 
 scalaVersion := "2.11.4"
 
+scalariformSettings
+
 resolvers ++= Seq("snapshots", "releases").map(Resolver.sonatypeRepo)
 
 resolvers += "Scalaz Bintray Repo" at "http://dl.bintray.com/scalaz/releases"
