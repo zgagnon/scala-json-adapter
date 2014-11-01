@@ -12,7 +12,7 @@ import spray.json._
  */
 class SprayTo4sSpec extends Specification with ScalaCheck {
 
-  import com.zgagnon.jsonAdapter._
+  import com.zgagnon.jsonAdapter.sprayAdapter._
 
   val obGen = for (
     string <- Gen.alphaStr

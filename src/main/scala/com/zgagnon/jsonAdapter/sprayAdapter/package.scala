@@ -1,13 +1,13 @@
-package com.zgagnon
+package com.zgagnon.jsonAdapter
 
-import org.json4s.JsonAST.{ JNull, JArray, JBool, JDecimal }
-import org.json4s.{ JObject, JString, JValue, JsonAST }
+import org.json4s.JsonAST.{JArray, JBool, JDecimal, JNull}
+import org.json4s.{JObject, JString, JValue, JsonAST}
 import spray.json._
 
 /**
  * Created by Zoe on 10/31/2014.
  */
-package object jsonAdapter {
+package object sprayAdapter {
 
   implicit def sprayString(string: JsString): JString = JsonAST.JString(string.value)
   implicit def sprayNumber(number: JsNumber): JDecimal = JDecimal(number.value)
