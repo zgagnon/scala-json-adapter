@@ -21,8 +21,7 @@ package object playAdapter {
   implicit def jsNumberToJDecimal(number: JsNumber): JDecimal = JDecimal(number.value)
   implicit def jsBooleanToJBool(bool: JsBoolean): JBool = JBool(bool.value)
   implicit def jsObjectToJObject(obj: JsObject): JObject = {
-    val fields = obj.fieldSet
-    val forSFields = for ((name, value) <- fields) yield { (name -> jsValueToJValue(value)) }
+    val forSFields = for ((name, value) <- obj.fieldSet) yield { (name -> jsValueToJValue(value)) }
     JObject(forSFields.toList)
   }
   implicit def jsArrayToJArray(array: JsArray): JArray = {
