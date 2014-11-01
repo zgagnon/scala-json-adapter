@@ -57,8 +57,19 @@
     <orderEntry type="library" name="SBT: org.json4s:json4s-core_2.11:3.2.11" level="project" />
     <orderEntry type="library" name="SBT: org.json4s:json4s-native_2.11:3.2.11" level="project" />
     <orderEntry type="library" name="SBT: org.scala-lang:scala-compiler:2.11.0" level="project" />
-    <orderEntry type="library" name="SBT: org.scala-lang:scala-reflect:2.11.0" level="project" />
     <orderEntry type="library" name="SBT: org.scala-lang:scalap:2.11.0" level="project" />
+    <orderEntry type="library" name="SBT: com.fasterxml.jackson.core:jackson-annotations:2.3.2" level="project" />
+    <orderEntry type="library" name="SBT: com.fasterxml.jackson.core:jackson-core:2.3.2" level="project" />
+    <orderEntry type="library" name="SBT: com.fasterxml.jackson.core:jackson-databind:2.3.2" level="project" />
+    <orderEntry type="library" name="SBT: com.typesafe:config:1.2.1" level="project" />
+    <orderEntry type="library" name="SBT: com.typesafe.play:play-datacommons_2.11:2.3.6" level="project" />
+    <orderEntry type="library" name="SBT: com.typesafe.play:play-functional_2.11:2.3.6" level="project" />
+    <orderEntry type="library" name="SBT: com.typesafe.play:play-iteratees_2.11:2.3.6" level="project" />
+    <orderEntry type="library" name="SBT: com.typesafe.play:play-json_2.11:2.3.6" level="project" />
+    <orderEntry type="library" name="SBT: joda-time:joda-time:2.3" level="project" />
+    <orderEntry type="library" name="SBT: org.joda:joda-convert:1.6" level="project" />
+    <orderEntry type="library" name="SBT: org.scala-lang:scala-reflect:2.11.1" level="project" />
+    <orderEntry type="library" name="SBT: org.scala-stm:scala-stm_2.11:0.7" level="project" />
   </component>
 </module>
 
