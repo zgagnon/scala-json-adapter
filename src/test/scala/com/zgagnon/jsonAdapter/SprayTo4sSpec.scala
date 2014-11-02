@@ -2,7 +2,6 @@ package com.zgagnon.jsonAdapter
 
 import org.json4s._
 import org.scalacheck.Gen
-import org.specs2.matcher.MatchResult
 import org.specs2.specification.Fragments
 import org.specs2.{ ScalaCheck, Specification }
 import spray.json._
@@ -21,6 +20,7 @@ class SprayTo4sSpec extends Specification with ScalaCheck {
   override def is: Fragments =
     s2"""
         The Spray converter provides a method to convert Spray JSON objects to Json4s objects.
+        To use, import the package com.zgagnon.jsonAdapter.sprayAdapter._
 
         In order to do this, a mapping between the types of the abstract syntax tree must be establish:
           A Spray JsString must produce a Json4s JString with the same value.                       $str
@@ -80,9 +80,5 @@ class SprayTo4sSpec extends Specification with ScalaCheck {
   def nul = {
     val forS: JValue = JsNull
     forS === JNull
-  }
-
-  def combineResults(results: Seq[MatchResult[_]]): MatchResult[Any] = {
-    (ok /: results) { (base, next) => base and next }
   }
 }
