@@ -28,7 +28,7 @@ class SprayTo4sSpec extends Specification with ScalaCheck {
           A Spray JsBoolean must produce a Json4s JBool with the same value.                        $bool
           A Spray JsObject must produce a Json4s JObject with the same values.                      $obj
           A Spray JsArray must produce a Json4s JArray with the same values.                        $array
-          A Sapray JsNull must produce a Json4s JNull.                                              $nul
+          A Spray JsNull must produce a Json4s JNull.                                              $nul
       """
 
   def str = prop {

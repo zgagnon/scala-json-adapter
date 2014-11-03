@@ -28,4 +28,9 @@ package object playAdapter {
     val values = for (value <- array.value) yield { jsValueToJValue(value) }
     JArray(values.toList)
   }
+
+  implicit def playToSpray(value: JsValue): spray.json.JsValue = {
+    import com.zgagnon.jsonAdapter.sprayAdapter.valueToSpray
+    valueToSpray(value)
+  }
 }
