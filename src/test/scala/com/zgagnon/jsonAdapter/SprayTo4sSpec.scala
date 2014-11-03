@@ -1,84 +1,70 @@
 package com.zgagnon.jsonAdapter
 
+import com.zgagnon.jsonAdapter.testUtils.Generators
+import org.json4s.JsonAST.JNull
 import org.json4s._
-import org.scalacheck.Gen
+import org.scalacheck.{ Gen, Prop }
 import org.specs2.specification.Fragments
 import org.specs2.{ ScalaCheck, Specification }
-import spray.json._
+import spray.json.JsNull
+import spray.json.{ JsArray, JsBoolean, JsObject, _ }
 
 /**
  * Created by Zoe on 10/31/2014.
  */
-class SprayTo4sSpec extends Specification with ScalaCheck {
+class SprayTo4sSpec extends Specification with ScalaCheck with Generators {
 
   import com.zgagnon.jsonAdapter.sprayAdapter._
 
   val obGen = for (
     string <- Gen.alphaStr
-  ) yield { JsObject("name" -> JsString(string)) }
+  ) yield {
+    JsObject("name" -> JsString(string))
+  }
 
   override def is: Fragments =
     s2"""
-        The Spray converter provides a method to convert Spray JSON objects to Json4s objects.
-        To use, import the package com.zgagnon.jsonAdapter.sprayAdapter._
+        The Spray converter provides implicit methods to
+          convert Spray JSON objects to Json4s objects $forS
 
-        In order to do this, a mapping between the types of the abstract syntax tree must be establish:
-          A Spray JsString must produce a Json4s JString with the same value.                       $str
-          A Spray JsNumber must produce a Json4s JDecimal with the same value.                      $dec
-          A Spray JsBoolean must produce a Json4s JBool with the same value.                        $bool
-          A Spray JsObject must produce a Json4s JObject with the same values.                      $obj
-          A Spray JsArray must produce a Json4s JArray with the same values.                        $array
-          A Spray JsNull must produce a Json4s JNull.                                              $nul
+
+        To use, import the package com.zgagnon.jsonAdapter.sprayAdapter._
       """
 
-  def str = prop {
-    (string: String) =>
-      val spray = JsString(string)
-      val forS: JString = spray
-      forS.values === string
+  def forS = Prop.forAll(sprayGen) {
+    (spray: JsValue) =>
+      val forSValue: JValue = spray
+      (forSValue, spray) match {
+        case (JNull, JsNull) => ok("JNull converted to JsNull properly")
+        case (js: JString, ps: JsString) => js.values === ps.value
+        case (jn: JInt, pn: JsNumber) => jn.values === pn.value
+        case (jd: JDouble, pn: JsNumber) => jd.values === pn.value
+        case (jd: JDecimal, pn: JsNumber) => jd.values === pn.value
+        case (jb: JBool, pb: JsBoolean) => jb.values === pb.value
+        case (JObject(JField("name", jval: JString) :: Nil), JsObject(pval: Map[String, JsValue])) => jval.values === pval("name").asInstanceOf[JsString].value
+        case (ja: JArray, pa: JsArray) =>
+          val f = ja.arr collect { case JObject(JField("name", value: JString) :: Nil) => value.values }
+          val p = pa.elements collect { case JsObject(values: Map[String, JsValue]) => values("name").asInstanceOf[JsString].value }
+          f.toVector === p
+        case _ => ok
+      }
   }
 
-  def dec = prop {
-    (value: BigDecimal) =>
-      val spray = JsNumber(value)
-      val forS: JDecimal = spray
-      forS.values === value
-  }
+  def playSpray = Prop.forAll(sprayGen) {
+    (spray: JsValue) =>
+      val playValue: play.api.libs.json.JsValue = spray
+      (spray, playValue) match {
+        case (ss: JsString, ps: play.api.libs.json.JsString) => ss.value === ps.value
+        case (sn: JsNumber, pn: play.api.libs.json.JsNumber) => sn.value === pn.value
+        case (sb: JsBoolean, pb: play.api.libs.json.JsBoolean) => sb.value === pb.value
+        case (so: JsObject, po: play.api.libs.json.JsObject) => (so.fields("name").toString()) === (po \\ "name").head.toString()
+        case (sa: JsArray, pa: play.api.libs.json.JsArray) =>
+          val spray = sa.elements collect { case s: JsObject => s.fields("name").toString }
+          val playItems = pa.value collect { case o: play.api.libs.json.JsObject => (o \\ "name").head.toString }
+          spray.toList === playItems
 
-  def bool = prop {
-    (value: Boolean) =>
-      val spray = JsBoolean(value)
-      val forS: JBool = spray
-      forS.values === value
-  }
-
-  def obj = prop {
-    (num: BigDecimal, string: String, bool: Boolean) =>
-      val spray = JsObject(
-        "num" -> JsNumber(num),
-        "string" -> JsString(string),
-        "bool" -> JsBoolean(bool)
-      )
-      val forS: JObject = spray
-      ((forS \\ "num").values === num) and
-        ((forS \\ "string").values === string) and
-        ((forS \\ "bool").values === bool)
-  }
-
-  def array = prop {
-    (string1: String, string2: String, string3: String) =>
-      val first = JsObject("name" -> JsString(string1))
-      val second = JsObject("name" -> JsString(string2))
-      val third = JsObject("name" -> JsString(string3))
-      val sprArray = JsArray(first, second, third)
-      val forS: JArray = sprArray
-      ((forS(0) \\ "name").values === string1) and
-        ((forS(1) \\ "name").values === string2) and
-        ((forS(2) \\ "name").values === string3)
-  }
-
-  def nul = {
-    val forS: JValue = JsNull
-    forS === JNull
+        case (JsNull, play.api.libs.json.JsNull) => ok("JsNull converts to JsNull properly")
+        case (s: JsValue, p: JsValue) => ko(s"Cannot convert $s to $p")
+      }
   }
 }

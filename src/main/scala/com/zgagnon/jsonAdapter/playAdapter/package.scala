@@ -33,4 +33,29 @@ package object playAdapter {
     import com.zgagnon.jsonAdapter.sprayAdapter.valueToSpray
     valueToSpray(value)
   }
+
+  implicit def jStringToJsString(string: JString): JsString = JsString(string.values)
+  implicit def jIntToJsNumber(int: JInt): JsNumber = JsNumber(BigDecimal(int.values))
+  implicit def jDecimalToJsNumber(dec: JDecimal): JsNumber = JsNumber(dec.values)
+  implicit def jBoolToJsBoolean(bool: JBool): JsBoolean = JsBoolean(bool.values)
+
+  implicit def jObjectToJObject(obj: JObject): JsObject = {
+    val fields = for ((name, value) <- obj.obj) yield { name -> jValueToJsValue(value) }
+    JsObject(fields)
+  }
+
+  implicit def jArrayToJsArray(array: JArray): JsArray = {
+    val values = for (value <- array.arr) yield { jValueToJsValue(value) }
+    JsArray(values)
+  }
+
+  implicit def jValueToJsValue(value: JValue): JsValue = value match {
+    case JInt(num) => JsNumber(BigDecimal(num))
+    case JDecimal(num) => JsNumber(num)
+    case JString(string) => JsString(string)
+    case JBool(bool) => JsBoolean(bool)
+    case obj: JObject => jObjectToJObject(obj)
+    case array: JArray => jArrayToJsArray(array)
+    case JNull => JsNull
+  }
 }

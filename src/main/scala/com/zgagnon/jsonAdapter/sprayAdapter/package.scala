@@ -7,11 +7,10 @@ import spray.json._
  * Created by Zoe on 10/31/2014.
  */
 package object sprayAdapter {
-
+  import com.zgagnon.jsonAdapter.playAdapter.jValueToJsValue
   implicit def sprayString(string: JsString): JString = JString(string.value)
   implicit def sprayNumber(number: JsNumber): JDecimal = JDecimal(number.value)
   implicit def sprayBoolean(boolean: JsBoolean): JBool = JBool(boolean.value)
-  implicit def sprayNull(obj: JsValue) = JNull
 
   implicit def sprayObject(obj: JsObject): JObject = {
     val forSFields = for ((name, value) <- obj.fields) yield { (name -> valueTo4S(value)) }
@@ -23,7 +22,7 @@ package object sprayAdapter {
     JArray(values.toList)
   }
 
-  def valueTo4S(value: JsValue): JValue = {
+  implicit def valueTo4S(value: JsValue): JValue = {
     value match {
       case s: JsString => sprayString(s)
       case n: JsNumber => sprayNumber(n)
@@ -36,7 +35,7 @@ package object sprayAdapter {
 
   implicit def forSString(string: JString): JsString = JsString(string.values)
   implicit def forSDecimal(dec: JDecimal): JsNumber = JsNumber(dec.values)
-  implicit def forSDouble(double: JDouble): JsNumber = JsNumber(double.values)
+  //implicit def forSDouble(double: JDouble): JsNumber = JsNumber(double.values)
   implicit def forSInt(int: JInt): JsNumber = JsNumber(int.values)
   implicit def forSBool(bool: JBool): JsBoolean = JsBoolean(bool.values)
 
@@ -50,11 +49,11 @@ package object sprayAdapter {
     JsArray(values.toVector)
   }
 
-  def valueToSpray(value: JValue): JsValue = {
+  implicit def valueToSpray(value: JValue): JsValue = {
     value match {
       case s: JString => forSString(s)
       case d: JDecimal => forSDecimal(d)
-      case dub: JDouble => forSDouble(dub)
+      //case dub: JDouble => forSDouble(dub)
       case i: JInt => forSInt(i)
       case b: JBool => forSBool(b)
       case o: JObject => forSObject(o)
@@ -63,4 +62,6 @@ package object sprayAdapter {
       case a: JArray => forSArray(a)
     }
   }
+
+  implicit def sprayToPlay(value: JsValue): play.api.libs.json.JsValue = jValueToJsValue(valueTo4S(value))
 }
