@@ -50,6 +50,7 @@ private[jsonAdapter] object Helpers {
       case CSSJson(fields) =>
         // It's silly to construct the same object again but the ClassTag makes this the easiest option.
         fields collect { case JField(name, value: A) => JField(name, value) } asOption
+      case array: JArray => array.values.zipWithIndex collect { case (value: A, index) => JField(index.toString, value) } asOption
     }
   }
 }

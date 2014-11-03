@@ -39,5 +39,11 @@ class CSSSelectorSpec extends Specification with ScalaCheck {
         case AnyObject(fields) => fields must containTheSameElementsAs(List(JField("inception", CSSJson("inception" -> "go deeper"))))
       }
     }
-      """
+
+    It can also be used to match against arrays:
+    ${
+      JArray("Test", 0, false) must beLike { case AnyNumber(fields) => fields must containTheSameElementsAs(List(JField("1", 0))) }
+    }
+
+     In that case, the fields returned will have the string output of their index as the name """
 }
